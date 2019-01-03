@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 
 @EnableAdminServer
 @Configuration
-@EnableAutoConfiguration
 @EnableEurekaClient
 @SpringBootApplication
 public class SpringBootAdminServerApplication {
