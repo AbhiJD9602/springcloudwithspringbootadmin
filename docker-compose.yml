@@ -1,0 +1,93 @@
+version: '2.1'
+services:
+  config-server:
+    image:  springcloudwithspringbootadmin/configurationserver
+
+  eureka-server:
+    image:  springcloudwithspringbootadmin/discoveryserver
+    hostname: eureka-server
+    depends_on:
+      - "config-server"
+    ports:
+      - "8082:8082"
+    networks:
+      - emp-network
+
+  book-service:
+    image:  springcloudwithspringbootadmin/bookservice
+    depends_on:
+      - "config-server"
+    ports:
+      - "8083:8083"
+    networks:
+      - emp-network
+    links:
+      - "eureka-server"
+      - "config-server"
+      - "hystrix-dashboard"
+
+  rating-service:
+    image:  springcloudwithspringbootadmin/ratingservice
+    depends_on:
+      - "config-server"
+    ports:
+      - "8084:8084"
+    networks:
+      - emp-network
+    links:
+      - "eureka-server"
+      - "config-server"
+      - "hystrix-dashboard"
+
+  authentication-service:
+    image:  springcloudwithspringbootadmin/authenticationserver
+    ports:
+      - "9100:9100"
+    networks:
+      - emp-network
+    links:
+      - "eureka-server"
+      - "config-server"
+      - "hystrix-dashboard"
+
+  admin-dashboard:
+    image:  springcloudwithspringbootadmin/springbootadminserver
+    ports:
+      - "8093:8093"
+    networks:
+      - emp-network
+    links:
+      - "eureka-server"
+      - "config-server"
+      - "book-service"
+      - "rating-service"
+      - "zuul"
+      - "hystrix-dashboard"
+
+  zuul:
+    image:  springcloudwithspringbootadmin/gateway
+    depends_on:
+      - "config-server"
+    ports:
+      - "8080:8080"
+    networks:
+      - emp-network
+    links:
+      - "eureka-server"
+      - "config-server"
+      - "book-service"
+      - "rating-service"
+
+
+  hystrix-dashboard:
+    image:  springcloudwithspringbootadmin/hystrix
+    ports:
+      - "8050:8050"
+    networks:
+      - emp-network
+    links:
+    - "eureka-server"
+
+networks:
+  emp-network:
+    driver: bridge

@@ -1,0 +1,28 @@
+server:
+  port: 8050
+
+spring:
+  application:
+    name: hystrix-dashboard
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8082/eureka/
+
+
+turbine:
+  appConfig: book-service,rating-service
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      show-details: ALWAYS
